@@ -1,8 +1,10 @@
 import styles from './Product.module.scss';
-import clsx from 'clsx';
-import Button from '../Button/Button';
 import PropTypes from 'prop-types';
 import { useState, useMemo } from 'react';
+import OptionColor from '../OptionColor/OptionColor';
+import OptionSize from '../OptionSize/OptionSize';
+import ProductImage from '../ProductImage/ProductImage';
+import Button from '../Button/Button';
 
 const Product = ({name, title, basePrice, colors, sizes}) => {
 
@@ -16,72 +18,40 @@ const Product = ({name, title, basePrice, colors, sizes}) => {
     );
   }, [currentSize, basePrice, sizes]);
 
-  /*   
-  Przycisk dodaj do koszyka ma pokazywać w konsoli co następuje:
-  
-  const displayBasket = () => {
+  const displayBasket = (e) => {
+
+    e.preventDefault();
 
     return (
-      console.log('Name: ', name),
+      console.log('Name: ', title),
       console.log('Price: ', getPrice),
       console.log('Size: ', currentSize),
       console.log('Color: ', currentColor)
     );
   };
-  
-  */
+
+
 
   return (
     <article className={styles.product}>
-      <div className={styles.imageContainer}>
-        <img 
-          className={styles.image}
-          alt={title}
-          src={`${process.env.PUBLIC_URL}/images/products/shirt-${name}--${currentColor}.jpg`} />
-      </div>
+
+        <ProductImage name={name} title={title} currentColor={currentColor} ></ProductImage>
+
       <div>
         <header>
           <h2 className={styles.name}>{title}</h2>
           <span className={styles.price}>Price: {getPrice}$</span>
         </header>
 
-        <form>
-          <div className={styles.sizes}>
-            <h3 className={styles.optionLabel}>Sizes</h3>
-            <ul className={styles.choices}>
-              {sizes.map(item => (
-                <li key={item.name}>
-                  <button 
-                    type="button" 
-                    className={clsx(item.name === currentSize && styles.active)}
-                    onClick={() => setCurrentSize(item.name)} // () => funkcja pośrednia, żeby odpaliła się dopiero po kliknięciu
-                  >
-                    {item.name}
-                  </button>
-                </li>
-              ))} 
-            </ul>
-          </div>
-          <div className={styles.colors}>
-            <h3 className={styles.optionLabel}>Colors</h3>
-            <ul className={styles.choices}>
-              {colors.map(item => (
-                <li key={item}>
-                  <button
-                  type="button"
-                  className={clsx(styles['color' + item[0].toUpperCase() + item.substr(1).toLowerCase()], item === currentColor && styles.active)}
-                  onClick={() => setCurrentColor(item)}
-                  >
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <Button 
-          className={styles.button}>
+        <form onSubmit={displayBasket}>
+          <OptionSize sizes={sizes} currentSize={currentSize} setCurrentSize={setCurrentSize}/>
+          
+          <OptionColor colors={colors} currentColor={currentColor} setCurrentColor={setCurrentColor}/>
+          
+          <Button className={styles.button}>
             <span className="fa fa-shopping-cart" />
           </Button>
-        </form>
+</form>
       </div>
     </article>
     )
